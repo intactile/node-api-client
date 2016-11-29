@@ -13,7 +13,9 @@ npm install @intactile/node-api-client
 
 ```javascript
 import ApiClient from '@intactile/node-api-client';
-this.apiClient.post('users', { firstName: 'John', lastName: 'Doe'  })
+
+const apiClient = new ApiClient();
+apiClient.post('users', { firstName: 'John', lastName: 'Doe'  })
   .then((response) => {
     console.log(response);
   })
