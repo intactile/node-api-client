@@ -9,7 +9,7 @@ env:
 cache:
   directories:
     - node_modules
-script: npm run test
+script: npm run test-cover
 after_script:
   - npm install -g codeclimate-test-reporter
   - codeclimate-test-reporter < ./coverage/lcov.info
