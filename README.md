@@ -1,8 +1,10 @@
 # node-api-client
 A basic node REST api client based on [superagent](http://visionmedia.github.io/superagent/).
 
-[![Code Climate](https://codeclimate.com/github/intactile/node-api-client.svg)](https://codeclimate.com/github/intactile/node-api-client)
+
 [![Build Status](https://travis-ci.org/intactile/node-api-client.svg?branch=master)](https://travis-ci.org/intactile/node-api-client)
+[![Code Climate](https://codeclimate.com/github/intactile/node-api-client/badges/gpa.svg)](https://codeclimate.com/github/intactile/node-api-client)
+[![Test Coverage](https://codeclimate.com/github/intactile/node-api-client/badges/coverage.svg)](https://codeclimate.com/github/intactile/node-api-client/coverage)
 
 ## Install
 
