@@ -1,6 +1,6 @@
 {
   "name": "@intactile/node-api-client",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "A basic node REST api client based on superagent",
   "main": "distribution/index.js",
   "scripts": {
@@ -38,7 +38,8 @@
     "nock": "^9.0.2"
   },
   "jest": {
-    "testPathDirs": ["src"]
+    "testPathDirs": [
+      "src"
+    ]
   }
-
 }
