@@ -4,3 +4,7 @@ node_js:
 env:
 - NODE_ENV=TEST
 script: npm run test
+
+addons:
+  code_climate:
+    repo_token: 9a21483360ae9dba60905dd4bbe6e8ec57d83583966430ff6af78adbd8e633d5
