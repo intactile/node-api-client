@@ -1,7 +1,7 @@
 import nock from 'nock';
 import ApiClient from './';
 
-describe('helpers.ApiClient', () => {
+describe('The ApiClient', () => {
   const client = new ApiClient();
   it('should declare a get method', () => {
     expect(client.get).toBeDefined();

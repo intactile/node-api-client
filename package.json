@@ -36,5 +36,9 @@
     "jasmine": "^2.5.2",
     "jest": "^17.0.3",
     "nock": "^9.0.2"
+  },
+  "jest": {
+    "testPathDirs": ["src"]
   }
+
 }
