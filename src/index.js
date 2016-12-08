@@ -19,12 +19,16 @@ export default class ApiClient {
   constructor(host) {
     host = host || '';
     methods.forEach((method) => {
-      this[method] = (path, { params, data, file } = {}) => new Promise((resolve, reject) => {
+      this[method] = (path, { params, data, headers, file } = {}) => new Promise((resolve, reject) => {
         const request = superagent[method](host + formatUrl(path));
         if (params) {
           request.query(params);
         }
-
+        if (headers) {
+          for (const headerName in headers) {
+            request.set(headerName, headers[headerName]);
+          }
+        }
         if (data) {
           clean(data);
           request.set('Content-Type', 'application/json');

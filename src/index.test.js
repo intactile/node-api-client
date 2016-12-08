@@ -2,7 +2,8 @@ import nock from 'nock';
 import ApiClient from './';
 
 describe('The ApiClient', () => {
-  const client = new ApiClient();
+  const host = 'http://intactile.com:9999';
+  const client = new ApiClient(host);
   it('should declare a get method', () => {
     expect(client.get).toBeDefined();
   });
@@ -23,7 +24,9 @@ describe('The ApiClient', () => {
     const toto = { description: 'Roger', test: null, test2: undefined };
     const cleandToto = { description: 'Roger' };
     const createdToto = { id: 12, description: 'Roger' };
-    nock('http://localhost/').post('/api/totos', cleandToto).reply(201, createdToto);
+    nock(host)
+      .matchHeader('Content-Type', 'application/json')
+      .post('/api/totos', cleandToto).reply(201, createdToto);
 
     return client.post('totos', { data: toto })
       .then((response) => {
@@ -33,12 +36,45 @@ describe('The ApiClient', () => {
   });
 
   it('should reject the returned promise if the response is a failure', () => {
-    nock('http://localhost/').get('/api/totos/12').reply(404, 'There is no such toto');
+    nock(host).get('/api/totos/12').reply(404, 'There is no such toto');
 
     return client.get('totos/12')
       .catch((response) => {
         expect(response.status).toEqual(404);
         expect(response.text).toEqual('There is no such toto');
+      });
+  });
+
+  it('should pass the supplied headers', () => {
+    nock(host)
+        .matchHeader('cookie', 'key=val')
+        .matchHeader('User-Agent', /Mozilla\/.*/)
+        .delete('/api/totos/17')
+        .reply(204);
+
+    return client.del('totos/17', {
+      headers: {
+        cookie: 'key=val',
+        'User-Agent': 'Mozilla/5.0 (compatible; Konqueror/3.5) KHTML/3.5.0 (like Gecko)',
+      },
+    })
+      .catch((response) => {
+        expect(response.status).toEqual(204);
+      });
+  });
+
+  it('should pass the supplied query', () => {
+    const totos = [{ description: 'Roger' }, { description: 'Robert' }];
+    const query = { role: 'admin', search: 'Ro' };
+    nock(host)
+      .get('/api/totos')
+      .query(query)
+      .reply(200, totos);
+
+    return client.get('totos', { params: query })
+      .then((response) => {
+        expect(response.status).toEqual(200);
+        expect(response.body).toEqual(totos);
       });
   });
 });
