@@ -77,4 +77,77 @@ describe('The ApiClient', () => {
         expect(response.body).toEqual(totos);
       });
   });
+
+  it('should pass the default supplied headers', () => {
+    nock(host)
+        .matchHeader('cookie', 'key=val')
+        .matchHeader('User-Agent', 'Mozilla/5.0')
+        .delete('/api/totos/17')
+        .reply(204);
+
+    client.addDefaultHeader('cookie', 'key=val');
+    client.addDefaultHeader('User-Agent', 'Mozilla/5.0');
+
+    return client.del('totos/17')
+      .catch((response) => {
+        expect(response.status).toEqual(204);
+      });
+  });
+
+  it('should pass the supplied headers', () => {
+    nock(host)
+        .matchHeader('cookie', 'key=val')
+        .matchHeader('User-Agent', 'Mozilla/5.0')
+        .delete('/api/totos/17')
+        .reply(204);
+
+    return client.del('totos/17', {
+      headers: {
+        cookie: 'key=val',
+        'User-Agent': 'Mozilla/5.0',
+      },
+    })
+      .catch((response) => {
+        expect(response.status).toEqual(204);
+      });
+  });
+
+  it('should override the default headers by the specific headers', () => {
+    nock(host)
+        .matchHeader('cookie', 'key=val')
+        .matchHeader('User-Agent', 'Mozilla/5.0')
+        .matchHeader('token', '$dezdez$ez')
+        .delete('/api/totos/17')
+        .reply(204);
+
+    client.addDefaultHeader('User-Agent', 'Chrome/17.0.939.0')
+          .addDefaultHeader('token', '$dezdez$ez');
+
+    return client.del('totos/17', {
+      headers: {
+        cookie: 'key=val',
+        'User-Agent': 'Mozilla/5.0',
+      },
+    })
+    .catch((response) => {
+      expect(response.status).toEqual(204);
+    });
+  });
+
+  it('should let you to remove the specific headers', () => {
+    nock(host)
+        .matchHeader('User-Agent', 'Chrome/17.0.939.0')
+        .matchHeader('token', val => val === undefined)
+        .delete('/api/totos/17')
+        .reply(204);
+
+    client.addDefaultHeader('User-Agent', 'Chrome/17.0.939.0')
+          .addDefaultHeader('token', '$dezdez$ez');
+    client.removeDefaultHeader('token');
+
+    return client.del('totos/17')
+    .catch((response) => {
+      expect(response.status).toEqual(204);
+    });
+  });
 });

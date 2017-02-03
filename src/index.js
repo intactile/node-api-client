@@ -15,20 +15,30 @@ function clean(obj) {
   });
 }
 
+function setHeaders(request, headers) {
+  if (headers) {
+    for (const headerName in headers) {
+      request.set(headerName, headers[headerName]);
+    }
+  }
+}
+
 export default class ApiClient {
   constructor(host) {
     host = host || '';
+    this.defaultHeaders = {};
+
     methods.forEach((method) => {
-      this[method] = (path, { params, data, headers, file } = {}) => new Promise((resolve, reject) => {
+      this[method] = (path, { params, data, headers, file } = {}) =>
+      new Promise((resolve, reject) => {
         const request = superagent[method](host + formatUrl(path));
         if (params) {
           request.query(params);
         }
-        if (headers) {
-          for (const headerName in headers) {
-            request.set(headerName, headers[headerName]);
-          }
-        }
+
+        setHeaders(request, this.defaultHeaders);
+        setHeaders(request, headers);
+
         if (data) {
           clean(data);
           request.set('Content-Type', 'application/json');
@@ -41,18 +51,13 @@ export default class ApiClient {
     });
   }
 
-  /*
-   * There's a V8 bug where, when using Babel, exporting classes with only
-   * constructors sometimes fails. Until it's patched, this is a solution to
-   * "ApiClient is not defined" from issue #14.
-   * https://github.com/erikras/react-redux-universal-hot-example/issues/14
-   *
-   * Relevant Babel bug (but they claim it's V8): https://phabricator.babeljs.io/T2455
-   *
-   * Remove it at your own risk.
-   */
+  addDefaultHeader(name, value) {
+    this.defaultHeaders[name] = value;
+    return this;
+  }
 
-  /* eslint-disable class-methods-use-this */
-  empty() {}
-  /* eslint-enable class-methods-use-this */
+  removeDefaultHeader(name, value) {
+    Reflect.deleteProperty(this.defaultHeaders, name);
+    return this;
+  }
 }
