@@ -45,24 +45,6 @@ describe('The ApiClient', () => {
       });
   });
 
-  it('should pass the supplied headers', () => {
-    nock(host)
-        .matchHeader('cookie', 'key=val')
-        .matchHeader('User-Agent', /Mozilla\/.*/)
-        .delete('/api/totos/17')
-        .reply(204);
-
-    return client.del('totos/17', {
-      headers: {
-        cookie: 'key=val',
-        'User-Agent': 'Mozilla/5.0 (compatible; Konqueror/3.5) KHTML/3.5.0 (like Gecko)',
-      },
-    })
-      .catch((response) => {
-        expect(response.status).toEqual(204);
-      });
-  });
-
   it('should pass the supplied query', () => {
     const totos = [{ description: 'Roger' }, { description: 'Robert' }];
     const query = { role: 'admin', search: 'Ro' };
@@ -78,33 +60,17 @@ describe('The ApiClient', () => {
       });
   });
 
-  it('should pass the default supplied headers', () => {
-    nock(host)
-        .matchHeader('cookie', 'key=val')
-        .matchHeader('User-Agent', 'Mozilla/5.0')
-        .delete('/api/totos/17')
-        .reply(204);
-
-    client.addDefaultHeader('cookie', 'key=val');
-    client.addDefaultHeader('User-Agent', 'Mozilla/5.0');
-
-    return client.del('totos/17')
-      .catch((response) => {
-        expect(response.status).toEqual(204);
-      });
-  });
-
   it('should pass the supplied headers', () => {
     nock(host)
-        .matchHeader('cookie', 'key=val')
-        .matchHeader('User-Agent', 'Mozilla/5.0')
+        .matchHeader('A', '1')
+        .matchHeader('B', '2')
         .delete('/api/totos/17')
         .reply(204);
 
     return client.del('totos/17', {
       headers: {
-        cookie: 'key=val',
-        'User-Agent': 'Mozilla/5.0',
+        A: '1',
+        B: '2',
       },
     })
       .catch((response) => {
@@ -112,21 +78,37 @@ describe('The ApiClient', () => {
       });
   });
 
-  it('should override the default headers by the specific headers', () => {
+  it('should pass the default supplied headers', () => {
     nock(host)
-        .matchHeader('cookie', 'key=val')
-        .matchHeader('User-Agent', 'Mozilla/5.0')
-        .matchHeader('token', '$dezdez$ez')
-        .delete('/api/totos/17')
+        .matchHeader('A', '1')
+        .matchHeader('B', '2')
+        .get('/api/titis')
         .reply(204);
 
-    client.addDefaultHeader('User-Agent', 'Chrome/17.0.939.0')
-          .addDefaultHeader('token', '$dezdez$ez');
+    client.addDefaultHeader('A', '1');
+    client.addDefaultHeader('B', '2');
 
-    return client.del('totos/17', {
+    return client.get('titis')
+      .catch((response) => {
+        expect(response.status).toEqual(204);
+      });
+  });
+
+  it('should override the default headers by the specific headers', () => {
+    nock(host)
+        .matchHeader('A', '1')
+        .matchHeader('B', '2')
+        .matchHeader('C', '3')
+        .get('/api/totos/17')
+        .reply(204);
+
+    client.addDefaultHeader('B', '9')
+          .addDefaultHeader('C', '3');
+
+    return client.get('totos/17', {
       headers: {
-        cookie: 'key=val',
-        'User-Agent': 'Mozilla/5.0',
+        A: '1',
+        B: '2',
       },
     })
     .catch((response) => {
@@ -136,16 +118,16 @@ describe('The ApiClient', () => {
 
   it('should let you to remove the specific headers', () => {
     nock(host)
-        .matchHeader('User-Agent', 'Chrome/17.0.939.0')
-        .matchHeader('token', val => val === undefined)
-        .delete('/api/totos/17')
+        .matchHeader('A', '1')
+        .matchHeader('B', val => val === undefined)
+        .get('/api/totos/63')
         .reply(204);
 
-    client.addDefaultHeader('User-Agent', 'Chrome/17.0.939.0')
-          .addDefaultHeader('token', '$dezdez$ez');
-    client.removeDefaultHeader('token');
+    client.addDefaultHeader('A', '1')
+          .addDefaultHeader('B', '2');
+    client.removeDefaultHeader('B');
 
-    return client.del('totos/17')
+    return client.get('totos/63')
     .catch((response) => {
       expect(response.status).toEqual(204);
     });

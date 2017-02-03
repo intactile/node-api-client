@@ -17,9 +17,7 @@ function clean(obj) {
 
 function setHeaders(request, headers) {
   if (headers) {
-    for (const headerName in headers) {
-      request.set(headerName, headers[headerName]);
-    }
+    Object.keys(headers).forEach(name => request.set(name, headers[name]));
   }
 }
 
@@ -56,7 +54,7 @@ export default class ApiClient {
     return this;
   }
 
-  removeDefaultHeader(name, value) {
+  removeDefaultHeader(name) {
     Reflect.deleteProperty(this.defaultHeaders, name);
     return this;
   }
