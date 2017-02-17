@@ -1,6 +1,6 @@
 {
   "name": "@intactile/node-api-client",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A basic node REST api client based on superagent",
   "main": "distribution/index.js",
   "scripts": {
