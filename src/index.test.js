@@ -4,20 +4,23 @@ import ApiClient from './';
 describe('The ApiClient', () => {
   const host = 'http://intactile.com:9999';
   const client = new ApiClient(host);
-  it('should declare a get method', () => {
+  it('should declare a "get" method', () => {
     expect(client.get).toBeDefined();
   });
-  it('should declare a post method', () => {
+  it('should declare a "post" method', () => {
     expect(client.post).toBeDefined();
   });
-  it('should declare a put method', () => {
+  it('should declare a "put" method', () => {
     expect(client.put).toBeDefined();
   });
-  it('should declare a patch method', () => {
+  it('should declare a "patch" method', () => {
     expect(client.patch).toBeDefined();
   });
-  it('should declare a del method', () => {
+  it('should declare a "del" method', () => {
     expect(client.del).toBeDefined();
+  });
+  it('should declare a "head" method', () => {
+    expect(client.head).toBeDefined();
   });
 
   it('should resolve the returned promise if the response is a success', () => {

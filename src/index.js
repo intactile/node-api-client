@@ -1,6 +1,6 @@
 import superagent from 'superagent';
 
-const methods = ['get', 'post', 'put', 'patch', 'del'];
+const methods = ['get', 'head', 'post', 'put', 'patch', 'del'];
 
 function formatUrl(path) {
   const adjustedPath = path[0] !== '/' ? `/${path}` : path;
