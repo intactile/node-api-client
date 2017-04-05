@@ -2,8 +2,12 @@ import nock from 'nock';
 import ApiClient from './';
 
 describe('The ApiClient', () => {
+  const createClient = config => new ApiClient(config);
   const host = 'http://intactile.com:9999';
-  const client = new ApiClient(host);
+  const config = {
+    host,
+  };
+  let client = createClient(config);
   it('should declare a "get" method', () => {
     expect(client.get).toBeDefined();
   });
@@ -133,6 +137,29 @@ describe('The ApiClient', () => {
     return client.get('totos/63')
     .catch((response) => {
       expect(response.status).toEqual(204);
+    });
+  });
+
+  const apiNameCases = [
+    { desciption: 'should enable default api name' },
+    { apiName: '', desciption: 'should enable no api name' },
+    { apiName: 'v1', desciption: 'should enable specific api name' },
+  ];
+  apiNameCases.forEach((apiNameCase) => {
+    it(apiNameCase.desciption, () => {
+      let apiName = apiNameCase.apiName === undefined ? 'api' : apiNameCase.apiName;
+      apiName = apiName === '' ? apiName : `/${apiName}`;
+      nock(host)
+        .get(`${apiName}/totos`)
+        .reply(200);
+      client = createClient({
+        host,
+        apiName: apiNameCase.apiName,
+      });
+      return client.get('totos')
+        .then((response) => {
+          expect(response.status).toEqual(200);
+        });
     });
   });
 });

@@ -2,9 +2,10 @@ import superagent from 'superagent';
 
 const methods = ['get', 'head', 'post', 'put', 'patch', 'del'];
 
-function formatUrl(path) {
+function formatUrl(path, apiName) {
   const adjustedPath = path[0] !== '/' ? `/${path}` : path;
-  return `/api${adjustedPath}`;
+  const adjustedApiName = apiName !== '' ? `/${apiName}` : apiName;
+  return `${adjustedApiName}${adjustedPath}`;
 }
 
 function clean(obj) {
@@ -22,14 +23,16 @@ function setHeaders(request, headers) {
 }
 
 export default class ApiClient {
-  constructor(host) {
-    host = host || '';
+  constructor(config) {
+    config = config || {};
+    const host = config.host || '';
+    const apiName = config.apiName !== undefined ? config.apiName : 'api';
     this.defaultHeaders = {};
 
     methods.forEach((method) => {
       this[method] = (path, { params, data, headers, file } = {}) =>
       new Promise((resolve, reject) => {
-        const request = superagent[method](host + formatUrl(path));
+        const request = superagent[method](host + formatUrl(path, apiName));
         if (params) {
           request.query(params);
         }
