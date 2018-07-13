@@ -30,25 +30,28 @@ export default class ApiClient {
     this.defaultHeaders = {};
 
     methods.forEach((method) => {
-      this[method] = (path, { params, data, headers, file } = {}) =>
-      new Promise((resolve, reject) => {
-        const request = superagent[method](host + formatUrl(path, apiName));
-        if (params) {
-          request.query(params);
-        }
+      this[method] = (path, { params, data, headers, file, fields } = {}) =>
+        new Promise((resolve, reject) => {
+          const request = superagent[method](host + formatUrl(path, apiName));
+          if (params) {
+            request.query(params);
+          }
+          if (fields) {
+            Object.entries(fields).forEach(entry => request.field(entry[0], entry[1]));
+          }
 
-        setHeaders(request, this.defaultHeaders);
-        setHeaders(request, headers);
+          setHeaders(request, this.defaultHeaders);
+          setHeaders(request, headers);
 
-        if (data) {
-          clean(data);
-          request.set('Content-Type', 'application/json');
-          request.send(data);
-        } else if (file) {
-          request.attach('file', file);
-        }
-        request.end((error, response) => (error ? reject(response || error) : resolve(response)));
-      });
+          if (data) {
+            clean(data);
+            request.set('Content-Type', 'application/json');
+            request.send(data);
+          } else if (file) {
+            request.attach('file', file);
+          }
+          request.end((error, response) => (error ? reject(response || error) : resolve(response)));
+        });
     });
   }
 
