@@ -30,26 +30,36 @@ export default class ApiClient {
     this.defaultHeaders = {};
 
     methods.forEach((method) => {
-      this[method] = (path, { params, data, headers, file, fields } = {}) =>
+      this[method] = (path, { params, data, headers, file, files, fields } = {}) =>
         new Promise((resolve, reject) => {
           const request = superagent[method](host + formatUrl(path, apiName));
-          if (params) {
-            request.query(params);
-          }
-          if (fields) {
-            Object.entries(fields).forEach(entry => request.field(entry[0], entry[1]));
-          }
 
           setHeaders(request, this.defaultHeaders);
           setHeaders(request, headers);
 
+          if (params) {
+            request.query(params);
+          }
+
+          // If data property is provided, send a json request
+          // if no data is provided but a files property is
+          // we are dealing with a multipart request
           if (data) {
             clean(data);
             request.set('Content-Type', 'application/json');
             request.send(data);
-          } else if (file) {
-            request.attach('file', file);
+          } else if (file || files) {
+            if (files) {
+              Object.entries(files).forEach(f => request.attach(f[0], f[1]));
+            } else if (file) {
+              request.attach('file', file);
+            }
+
+            if (fields) {
+              Object.entries(fields).forEach(field => request.field(field[0], field[1]));
+            }
           }
+
           request.end((error, response) => (error ? reject(response || error) : resolve(response)));
         });
     });
