@@ -1,8 +1,8 @@
 import nock from 'nock';
-import ApiClient from './';
+import ApiClient from '.';
 
 describe('The ApiClient', () => {
-  const createClient = config => new ApiClient(config);
+  const createClient = (config) => new ApiClient(config);
   const host = 'http://intactile.com:9999';
   const config = {
     host,
@@ -69,10 +69,10 @@ describe('The ApiClient', () => {
 
   it('should pass the supplied headers', () => {
     nock(host)
-        .matchHeader('A', '1')
-        .matchHeader('B', '2')
-        .delete('/api/totos/17')
-        .reply(204);
+      .matchHeader('A', '1')
+      .matchHeader('B', '2')
+      .delete('/api/totos/17')
+      .reply(204);
 
     return client.del('totos/17', {
       headers: {
@@ -87,10 +87,10 @@ describe('The ApiClient', () => {
 
   it('should pass the default supplied headers', () => {
     nock(host)
-        .matchHeader('A', '1')
-        .matchHeader('B', '2')
-        .get('/api/titis')
-        .reply(204);
+      .matchHeader('A', '1')
+      .matchHeader('B', '2')
+      .get('/api/titis')
+      .reply(204);
 
     client.addDefaultHeader('A', '1');
     client.addDefaultHeader('B', '2');
@@ -103,14 +103,14 @@ describe('The ApiClient', () => {
 
   it('should override the default headers by the specific headers', () => {
     nock(host)
-        .matchHeader('A', '1')
-        .matchHeader('B', '2')
-        .matchHeader('C', '3')
-        .get('/api/totos/17')
-        .reply(204);
+      .matchHeader('A', '1')
+      .matchHeader('B', '2')
+      .matchHeader('C', '3')
+      .get('/api/totos/17')
+      .reply(204);
 
     client.addDefaultHeader('B', '9')
-          .addDefaultHeader('C', '3');
+      .addDefaultHeader('C', '3');
 
     return client.get('totos/17', {
       headers: {
@@ -118,26 +118,26 @@ describe('The ApiClient', () => {
         B: '2',
       },
     })
-    .catch((response) => {
-      expect(response.status).toEqual(204);
-    });
+      .catch((response) => {
+        expect(response.status).toEqual(204);
+      });
   });
 
   it('should let you to remove the specific headers', () => {
     nock(host)
-        .matchHeader('A', '1')
-        .matchHeader('B', val => val === undefined)
-        .get('/api/totos/63')
-        .reply(204);
+      .matchHeader('A', '1')
+      .matchHeader('B', (val) => val === undefined)
+      .get('/api/totos/63')
+      .reply(204);
 
     client.addDefaultHeader('A', '1')
-          .addDefaultHeader('B', '2');
+      .addDefaultHeader('B', '2');
     client.removeDefaultHeader('B');
 
     return client.get('totos/63')
-    .catch((response) => {
-      expect(response.status).toEqual(204);
-    });
+      .catch((response) => {
+        expect(response.status).toEqual(204);
+      });
   });
 
   const apiNameCases = [

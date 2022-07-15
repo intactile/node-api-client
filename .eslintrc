@@ -1,18 +1,19 @@
 {
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "requireConfigFile": false,
+    "babelOptions": {
+      "presets": ["@babel/preset-env"]
+    }
+  },
   "extends": [
     "airbnb-base"
   ],
   "env": {
-    "jasmine": true,
-  },
-  "ecmaFeatures": {
-    "classes": true,
-  },
-  "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "module"
+    "jest/globals": true
   },
   "plugins": [
+    "jest",
     "import"
   ],
   "rules": {
@@ -24,13 +25,8 @@
     "prefer-spread": 2,
     "prefer-reflect": 2,
     "no-warning-comments": [1, { "terms": ["todo", "fixme"], "location": "start" }],
-    "import/extensions": [1, { "js": "never" }],
     "import/no-extraneous-dependencies": [0],
     "no-param-reassign": 0,
-    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
-  },
-
-  "ignore": [
-    "coverage"
-  ]
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }]
+  }
 }

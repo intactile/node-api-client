@@ -18,7 +18,7 @@ function clean(obj) {
 
 function setHeaders(request, headers) {
   if (headers) {
-    Object.keys(headers).forEach(name => request.set(name, headers[name]));
+    Object.keys(headers).forEach((name) => request.set(name, headers[name]));
   }
 }
 
@@ -30,38 +30,39 @@ export default class ApiClient {
     this.defaultHeaders = {};
 
     methods.forEach((method) => {
-      this[method] = (path, { params, data, headers, file, files, fields } = {}) =>
-        new Promise((resolve, reject) => {
-          const request = superagent[method](host + formatUrl(path, apiName));
+      this[method] = (path, {
+        params, data, headers, file, files, fields,
+      } = {}) => new Promise((resolve, reject) => {
+        const request = superagent[method](host + formatUrl(path, apiName));
 
-          setHeaders(request, this.defaultHeaders);
-          setHeaders(request, headers);
+        setHeaders(request, this.defaultHeaders);
+        setHeaders(request, headers);
 
-          if (params) {
-            request.query(params);
+        if (params) {
+          request.query(params);
+        }
+
+        // If data property is provided, send a json request
+        // if no data is provided but a files property is
+        // we are dealing with a multipart request
+        if (data) {
+          clean(data);
+          request.set('Content-Type', 'application/json');
+          request.send(data);
+        } else if (file || files) {
+          if (files) {
+            Object.entries(files).forEach((f) => request.attach(f[0], f[1]));
+          } else if (file) {
+            request.attach('file', file);
           }
 
-          // If data property is provided, send a json request
-          // if no data is provided but a files property is
-          // we are dealing with a multipart request
-          if (data) {
-            clean(data);
-            request.set('Content-Type', 'application/json');
-            request.send(data);
-          } else if (file || files) {
-            if (files) {
-              Object.entries(files).forEach(f => request.attach(f[0], f[1]));
-            } else if (file) {
-              request.attach('file', file);
-            }
-
-            if (fields) {
-              Object.entries(fields).forEach(field => request.field(field[0], field[1]));
-            }
+          if (fields) {
+            Object.entries(fields).forEach((field) => request.field(field[0], field[1]));
           }
+        }
 
-          request.end((error, response) => (error ? reject(response || error) : resolve(response)));
-        });
+        request.end((error, response) => (error ? reject(response || error) : resolve(response)));
+      });
     });
   }
 
